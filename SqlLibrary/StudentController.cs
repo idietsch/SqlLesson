@@ -51,5 +51,70 @@ namespace SqlLibrary {
             reader = null;
             return student;
         }
+
+        public static bool InsertStudent(Student student) {
+            var majorId = "";
+            if (student.MajorId == null) {
+                majorId = "NULL";
+            } else {
+                majorId = student.MajorId.ToString();
+            } 
+            //var sql = $"INSERT into Student (Id, FirstName, LastName, SAT, GPA, MajorId) VALUES ({student.Id}, '{student.FirstName}', '{student.LastName}', {student.SAT}, {student.GPA}, {majorId})";
+            //Using string interpolation for sql statements is not good practice. easy to change and hack
+
+            var sql = $"INSERT into Student (Id, FirstName, LastName, SAT, GPA, MajorId) VALUES (@Id, @FirstName, @LastName, @SAT, @GPA, @MajorId); ";
+            
+            var command = new SqlCommand(sql, bcConnection.Connection);
+            command.Parameters.AddWithValue("@Id", student.Id);
+            command.Parameters.AddWithValue("@FirstName", student.FirstName);
+            command.Parameters.AddWithValue("@LastName", student.LastName);
+            command.Parameters.AddWithValue("@SAT", student.SAT);
+            command.Parameters.AddWithValue("@GPA", student.GPA);
+            command.Parameters.AddWithValue("@MajorId", student.MajorId ?? Convert.DBNull);
+            //Preferred method, even though it uses more space 
+            var recsAffected = command.ExecuteNonQuery();
+            if(recsAffected != 1) {
+                throw new Exception("Insert failed");
+            }
+            return true;
+        }
+
+        public static bool UpdateStudent(Student student) {
+            var sql = "UPDATE Student Set" + " FirstName = @FirstName, LastName = @LastName, SAT = @SAT, GPA = @GPA, MajorId = @MajorId Where Id = @Id;";
+            var command = new SqlCommand(sql, bcConnection.Connection);
+            command.Parameters.AddWithValue("@Id", student.Id);
+            command.Parameters.AddWithValue("@FirstName", student.FirstName);
+            command.Parameters.AddWithValue("@LastName", student.LastName);
+            command.Parameters.AddWithValue("@SAT", student.SAT);
+            command.Parameters.AddWithValue("@GPA", student.GPA);
+            command.Parameters.AddWithValue("@MajorId", student.MajorId ?? Convert.DBNull);
+            //Preferred method, even though it uses more space 
+            var recsAffected = command.ExecuteNonQuery();
+            if (recsAffected != 1) {
+                throw new Exception("Update failed");
+            }
+            return true;
+
+        }
+
+        public static bool DeleteStudent(Student student) {
+            var sql = "DELETE from Student Where Id = @Id;";
+            var command = new SqlCommand(sql, bcConnection.Connection);
+            command.Parameters.AddWithValue("@Id", student.Id);
+
+            var recsAffected = command.ExecuteNonQuery();
+            if (recsAffected != 1) {
+                throw new Exception("Delete failed");
+            }
+            return true;
+        }
+        public static bool DeleteStudent(int id) {
+            var std = GetByPk(id);
+            if(std == null) {
+                return false;
+            }
+            var success = DeleteStudent(std);
+            return true;
+        }
     }
 }

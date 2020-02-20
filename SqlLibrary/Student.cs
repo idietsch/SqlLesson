@@ -14,7 +14,7 @@ namespace SqlLibrary {
         public int? MajorId { get; set; }
 
         public override string ToString() {
-            return $"{Id}|{FirstName} {LastName}|{SAT}|{GPA}";
+            return $"{Id}|{FirstName} {LastName}|{SAT}|{GPA}|{MajorId}";
         }
         public Student() {  }
     }

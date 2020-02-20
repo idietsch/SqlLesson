@@ -8,13 +8,30 @@ namespace SqlLesson {
             sqllib.Connect(@"localhost", "EdDb", "trusted_connection=true");
             StudentController.bcConnection = sqllib;
 
-            var student100 = StudentController.GetByPk(100);
+            //var newStudent = new Student {
+            //    Id = 777,
+            //    FirstName = "Kingsly",
+            //    LastName = "Kingsworth",
+            //    SAT = 950,
+            //    GPA = 3.1,
+            //    MajorId = null
+            //};
+            //var success = StudentController.InsertStudent(newStudent);
+
+            var student100 = StudentController.GetByPk(888);
             if (student100 == null) {
                 Console.WriteLine("Student not found");
             } else {
                 Console.WriteLine(student100);
             }
+            student100.FirstName = "Jackie";
+            student100.LastName = "Chan";
+            var success = StudentController.UpdateStudent(student100);
 
+            var studentToDelete = new Student {
+                Id = 777
+            };
+            success = StudentController.DeleteStudent(888);
 
             var students = StudentController.GetAllStudents();
             foreach(var student in students) {
