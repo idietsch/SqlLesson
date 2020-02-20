@@ -8,7 +8,7 @@ namespace SqlLibrary {
         public static BcConnection bcConnection { get; set; }
 
         public static List<Student> GetAllStudents() {
-            var sql = "SELECT * From Student";
+            var sql = "SELECT * From Student s Left Join Major m on m.Id = s.MajorId";
             var command = new SqlCommand(sql, bcConnection.Connection); //second connection is the sql connection inside Bc class
             var reader = command.ExecuteReader();
             if (!reader.HasRows) {
@@ -24,6 +24,15 @@ namespace SqlLibrary {
                 student.SAT = Convert.ToInt32(reader["SAT"]);
                 student.GPA = Convert.ToDouble(reader["GPA"]);
                 //student.MajorId = Convert.ToInt32(reader["MajorId"]);
+                if(Convert.IsDBNull(reader["Description"])) {
+                    student.Major = null;
+                } else {
+                    var major = new Major {
+                        Description = reader["Description"].ToString(),
+                        MinSat = Convert.ToInt32(reader["MinSat"])
+                    };
+                    student.Major = major;
+                }
                 students.Add(student);
             }
             reader.Close();
@@ -36,6 +45,7 @@ namespace SqlLibrary {
             var command = new SqlCommand(sql, bcConnection.Connection);
             var reader = command.ExecuteReader();
             if (!reader.HasRows) {
+                reader.Close();
                 return null;
             }
             reader.Read();

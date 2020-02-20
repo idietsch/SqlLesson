@@ -6,6 +6,14 @@ namespace SqlLesson {
         static void Main(string[] args) {
             var sqllib = new BcConnection();
             sqllib.Connect(@"localhost", "EdDb", "trusted_connection=true");
+
+            MajorController.bcConnection = sqllib;
+
+            var majors = MajorController.GetAllMajors();
+            foreach(var major in majors) {
+                Console.WriteLine(major);
+            }
+
             StudentController.bcConnection = sqllib;
 
             //var newStudent = new Student {
@@ -24,14 +32,14 @@ namespace SqlLesson {
             } else {
                 Console.WriteLine(student100);
             }
-            student100.FirstName = "Jackie";
-            student100.LastName = "Chan";
-            var success = StudentController.UpdateStudent(student100);
-
-            var studentToDelete = new Student {
-                Id = 777
-            };
-            success = StudentController.DeleteStudent(888);
+            //student100.FirstName = "Jackie";
+            //student100.LastName = "Chan";
+            //var success = StudentController.UpdateStudent(student100);
+            //
+            //var studentToDelete = new Student {
+            //    Id = 777
+            //};
+            //success = StudentController.DeleteStudent(888);
 
             var students = StudentController.GetAllStudents();
             foreach(var student in students) {
