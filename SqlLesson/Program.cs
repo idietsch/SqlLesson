@@ -50,6 +50,27 @@ namespace SqlLesson {
             foreach (var major in majors) {
                 Console.WriteLine(m);
             }
+            InstructorController.bcConnection = sqllib;
+
+            var instructors = InstructorController.GetAllInstructors();
+            foreach(var instructor in instructors) {
+                Console.WriteLine(instructor);
+            }
+
+            var instructPK = InstructorController.GetByPk(30);
+            if (instructPK == null) {
+                Console.WriteLine("Instructor not found");
+            }else {
+                Console.WriteLine(instructPK);
+            }
+
+            ClassController.bcConnection = sqllib;
+
+            var classes = ClassController.GetAllClasses();
+            foreach(var cla in classes) {
+                Console.WriteLine(cla);
+            }
+
             sqllib.Disconnect();
         }
     }
