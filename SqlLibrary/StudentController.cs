@@ -7,6 +7,16 @@ namespace SqlLibrary {
     public class StudentController {
         public static BcConnection bcConnection { get; set; }
 
+        private static Student SPullAndFeed(SqlDataReader reader) {
+            var student = new Student();
+            student.Id = Convert.ToInt32(reader["Id"]);
+            student.FirstName = reader["FirstName"].ToString();
+            student.LastName = reader["LastName"].ToString();
+            student.SAT = Convert.ToInt32(reader["SAT"]);
+            student.GPA = Convert.ToDouble(reader["GPA"]);
+            return student;
+        }
+
         public static List<Student> GetAllStudents() {
             var sql = "SELECT * From Student s Left Join Major m on m.Id = s.MajorId";
             var command = new SqlCommand(sql, bcConnection.Connection); //second connection is the sql connection inside Bc class
@@ -17,12 +27,13 @@ namespace SqlLibrary {
             }
             var students = new List<Student>();
             while (reader.Read()) {
-                var student = new Student();
-                student.Id = Convert.ToInt32(reader["Id"]);
-                student.FirstName = reader["FirstName"].ToString();
-                student.LastName = reader["LastName"].ToString();
-                student.SAT = Convert.ToInt32(reader["SAT"]);
-                student.GPA = Convert.ToDouble(reader["GPA"]);
+                var student = SPullAndFeed(reader);
+                //var student = new Student();
+                //student.Id = Convert.ToInt32(reader["Id"]);
+                //student.FirstName = reader["FirstName"].ToString();
+                //student.LastName = reader["LastName"].ToString();
+                //student.SAT = Convert.ToInt32(reader["SAT"]);
+                //student.GPA = Convert.ToDouble(reader["GPA"]);
                 //student.MajorId = Convert.ToInt32(reader["MajorId"]);
                 if(Convert.IsDBNull(reader["Description"])) {
                     student.Major = null;
@@ -49,14 +60,15 @@ namespace SqlLibrary {
                 return null;
             }
             reader.Read();
-            var student = new Student {
-                Id = Convert.ToInt32(reader["Id"]),
-                FirstName = reader["FirstName"].ToString(),
-                LastName = reader["LastName"].ToString(),
-                SAT = Convert.ToInt32(reader["SAT"]),  //changed from block above to show same thing done a little simpler
-                GPA = Convert.ToDouble(reader["GPA"])
-                //student.MajorId = Convert.ToInt32(reader["MajorId"]);
-            };
+            var student = SPullAndFeed(reader);
+            //var student = new Student {
+            //    Id = Convert.ToInt32(reader["Id"]),
+            //    FirstName = reader["FirstName"].ToString(),
+            //    LastName = reader["LastName"].ToString(),
+            //    SAT = Convert.ToInt32(reader["SAT"]),  //changed from block above to show same thing done a little simpler
+            //    GPA = Convert.ToDouble(reader["GPA"])
+            //    //student.MajorId = Convert.ToInt32(reader["MajorId"]);
+            //};
             reader.Close();
             reader = null;
             return student;
